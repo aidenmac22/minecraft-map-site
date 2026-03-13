@@ -1,0 +1,10 @@
+[
+  {
+    "id": "example",
+    "name": "Example Territory",
+    "type": "Territory",
+    "owner": "Unknown",
+    "description": "Replace this with real data.",
+    "points": [[3000,2000],[3400,2100],[3300,2500],[2950,2400]]
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "imageWidth": 10752,
+  "imageHeight": 5632,
+  "minZoom": 0,
+  "maxZoom": 6,
+  "tilePath": "./tiles/{z}/{x}/{y}.webp"
+}
