@@ -12,10 +12,77 @@ html, body {
   height: 100vh;
 }
 
-#map {
-  height: 100vh;
-  width: 100%;
+#map-wrap {
+  position: relative;
+  overflow: hidden;
   background: #111;
+}
+
+#toolbar {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  background: rgba(20, 25, 35, 0.9);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+#search, button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #334;
+  background: #0d1320;
+  color: white;
+}
+
+#stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+}
+
+#stage.grabbing {
+  cursor: grabbing;
+}
+
+#world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+
+#mapImage {
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.region {
+  pointer-events: auto;
+  fill: rgba(100, 160, 255, 0.20);
+  stroke: rgba(100, 160, 255, 0.95);
+  stroke-width: 2;
+}
+
+.region:hover {
+  fill: rgba(100, 160, 255, 0.35);
+}
+
+.region.selected {
+  fill: rgba(255, 210, 100, 0.30);
+  stroke: rgba(255, 210, 100, 1);
 }
 
 #panel {
@@ -38,16 +105,6 @@ html, body {
 
 #description {
   line-height: 1.5;
-}
-
-#search {
-  width: 100%;
-  margin-top: 16px;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #334;
-  background: #0d1320;
-  color: white;
 }
 
 .result-item {
