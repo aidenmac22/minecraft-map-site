@@ -34,6 +34,13 @@ function resetView() {
   applyTransform();
 }
 
+function rgbToRgba(rgbString, alpha) {
+  const match = rgbString.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/i);
+  if (!match) return `rgba(100,160,255,${alpha})`;
+  const [, r, g, b] = match;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 async function loadTerritories() {
   const res = await fetch("./data/territories.json");
   territories = await res.json();
@@ -48,6 +55,11 @@ function drawRegions() {
     poly.setAttribute("points", t.points.map(([x, y]) => `${x},${y}`).join(" "));
     poly.setAttribute("class", "region");
     poly.dataset.id = t.id;
+
+    const baseColor = t.color || "rgb(100,160,255)";
+    poly.style.fill = rgbToRgba(baseColor, 0.22);
+    poly.style.stroke = baseColor;
+    poly.style.strokeWidth = "2";
 
     poly.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -64,12 +76,35 @@ function selectTerritory(id) {
   if (!t) return;
 
   overlay.querySelectorAll(".region").forEach(el => {
-    el.classList.toggle("selected", el.dataset.id === id);
+    const territory = territories.find(x => x.id === el.dataset.id);
+    const baseColor = territory?.color || "rgb(100,160,255)";
+    const isSelected = el.dataset.id === id;
+
+    el.classList.toggle("selected", isSelected);
+    el.style.fill = isSelected ? rgbToRgba(baseColor, 0.42) : rgbToRgba(baseColor, 0.22);
+    el.style.stroke = baseColor;
+    el.style.strokeWidth = isSelected ? "3" : "2";
   });
 
   titleEl.textContent = t.name;
   metaEl.textContent = [t.type, t.owner ? `Owner: ${t.owner}` : ""].filter(Boolean).join(" • ");
   descEl.textContent = t.description || "";
+}
+
+function clearSelection() {
+  selectedId = null;
+  overlay.querySelectorAll(".region").forEach(el => {
+    const territory = territories.find(x => x.id === el.dataset.id);
+    const baseColor = territory?.color || "rgb(100,160,255)";
+    el.classList.remove("selected");
+    el.style.fill = rgbToRgba(baseColor, 0.22);
+    el.style.stroke = baseColor;
+    el.style.strokeWidth = "2";
+  });
+
+  titleEl.textContent = "Click a territory";
+  metaEl.textContent = "";
+  descEl.textContent = "Territory information will appear here.";
 }
 
 mapImage.addEventListener("load", () => {
@@ -108,6 +143,7 @@ window.addEventListener("mousemove", (e) => {
 
 stage.addEventListener("wheel", (e) => {
   e.preventDefault();
+
   const rect = stage.getBoundingClientRect();
   const cx = e.clientX - rect.left;
   const cy = e.clientY - rect.top;
@@ -124,31 +160,44 @@ stage.addEventListener("wheel", (e) => {
 }, { passive: false });
 
 stage.addEventListener("click", () => {
-  selectedId = null;
-  overlay.querySelectorAll(".region").forEach(el => el.classList.remove("selected"));
-  titleEl.textContent = "Click a territory";
-  metaEl.textContent = "";
-  descEl.textContent = "Territory information will appear here.";
+  clearSelection();
 });
 
-resetBtn.addEventListener("click", resetView);
+resetBtn.addEventListener("click", () => {
+  resetView();
+  clearSelection();
+});
 
 searchEl.addEventListener("input", () => {
   const q = searchEl.value.trim().toLowerCase();
   resultsEl.innerHTML = "";
+
   if (!q) return;
 
   const matches = territories.filter(t =>
-    t.name.toLowerCase().includes(q) ||
+    (t.name || "").toLowerCase().includes(q) ||
     (t.owner || "").toLowerCase().includes(q) ||
-    (t.type || "").toLowerCase().includes(q)
+    (t.type || "").toLowerCase().includes(q) ||
+    (t.id || "").toLowerCase().includes(q)
   );
 
   for (const t of matches) {
     const div = document.createElement("div");
     div.className = "result-item";
     div.textContent = t.name;
-    div.onclick = () => selectTerritory(t.id);
+
+    div.onclick = () => {
+      selectTerritory(t.id);
+
+      if (Array.isArray(t.centroid) && t.centroid.length === 2) {
+        const [x, y] = t.centroid;
+        const rect = stage.getBoundingClientRect();
+        tx = rect.width / 2 - x * scale;
+        ty = rect.height / 2 - y * scale;
+        applyTransform();
+      }
+    };
+
     resultsEl.appendChild(div);
   }
 });
