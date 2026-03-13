@@ -1,10 +1,146 @@
 [
   {
-    "id": "example",
-    "name": "Example Territory",
+    "id": "territory-1",
+    "name": "Territory 1",
     "type": "Territory",
-    "owner": "Unknown",
-    "description": "Replace this with your real territory.",
-    "points": [[300,200],[500,220],[470,380],[280,350]]
+    "owner": "",
+    "description": "",
+    "color": "rgb(0,253,253)",
+    "points": [[1680,534],[1667,547],[1657,597],[1643,631],[1637,632],[1639,644],[1663,644],[1671,658],[1684,646],[1708,647],[1737,597],[1729,585],[1704,593],[1693,589],[1687,573],[1676,568]]
+  },
+  {
+    "id": "territory-2",
+    "name": "Territory 2",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(254,0,0)",
+    "points": [[1445,663],[1443,694],[1446,702],[1450,703],[1448,704],[1460,704],[1465,709],[1479,711],[1495,707],[1496,687],[1492,680],[1482,677],[1487,674],[1480,662],[1463,657]]
+  },
+  {
+    "id": "territory-3",
+    "name": "Territory 3",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(254,0,0)",
+    "points": [[1414,599],[1415,609],[1419,610],[1425,605],[1424,596]]
+  },
+  {
+    "id": "territory-4",
+    "name": "Territory 4",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(254,0,0)",
+    "points": [[1391,625],[1390,650],[1398,664],[1409,666],[1419,652],[1416,633],[1404,624]]
+  },
+  {
+    "id": "territory-5",
+    "name": "Territory 5",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1486,713],[1484,737],[1497,755],[1522,762],[1546,756],[1557,733],[1544,710],[1516,703]]
+  },
+  {
+    "id": "territory-6",
+    "name": "Territory 6",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1549,761],[1568,775],[1589,773],[1597,752],[1588,735],[1564,733],[1549,742]]
+  },
+  {
+    "id": "territory-7",
+    "name": "Territory 7",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1621,710],[1625,734],[1642,744],[1662,739],[1670,716],[1659,701],[1639,697]]
+  },
+  {
+    "id": "territory-8",
+    "name": "Territory 8",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1703,716],[1705,738],[1722,750],[1742,747],[1751,726],[1738,706],[1719,704]]
+  },
+  {
+    "id": "territory-9",
+    "name": "Territory 9",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1776,687],[1779,713],[1796,724],[1815,721],[1823,699],[1811,679],[1792,677]]
+  },
+  {
+    "id": "territory-10",
+    "name": "Territory 10",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1853,674],[1855,700],[1872,713],[1893,708],[1901,687],[1889,666],[1868,664]]
+  },
+  {
+    "id": "territory-11",
+    "name": "Territory 11",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(0,175,0)",
+    "points": [[812,132],[786,164],[770,192],[778,221],[803,243],[839,244],[870,222],[889,191],[885,159],[861,136]]
+  },
+  {
+    "id": "territory-12",
+    "name": "Territory 12",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(0,175,0)",
+    "points": [[896,201],[920,218],[947,217],[964,198],[961,171],[937,156],[912,164]]
+  },
+  {
+    "id": "territory-13",
+    "name": "Territory 13",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(0,175,0)",
+    "points": [[720,164],[698,185],[691,213],[706,232],[734,236],[757,218],[758,191],[740,167]]
+  },
+  {
+    "id": "territory-14",
+    "name": "Territory 14",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1195,288],[1178,320],[1188,344],[1214,350],[1234,332],[1233,302],[1214,284]]
+  },
+  {
+    "id": "territory-15",
+    "name": "Territory 15",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1455,154],[1443,180],[1453,206],[1478,214],[1499,197],[1498,169],[1477,153]]
+  },
+  {
+    "id": "territory-16",
+    "name": "Territory 16",
+    "type": "Territory",
+    "owner": "",
+    "description": "",
+    "color": "rgb(119,81,168)",
+    "points": [[1775,174],[1761,209],[1773,237],[1800,245],[1826,222],[1824,188],[1800,171]]
   }
 ]
