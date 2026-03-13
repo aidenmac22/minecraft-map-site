@@ -6,198 +6,140 @@ const overlay = document.getElementById("overlay");
 const titleEl = document.getElementById("title");
 const metaEl = document.getElementById("meta");
 const descEl = document.getElementById("description");
-const searchEl = document.getElementById("search");
-const resultsEl = document.getElementById("results");
-const resetBtn = document.getElementById("resetView");
 
 let territories = [];
-let scale = 1;
-let tx = 0;
-let ty = 0;
-let dragging = false;
-let lastX = 0;
-let lastY = 0;
-let selectedId = null;
 
-function applyTransform() {
-  world.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+let drawMode = true;
+let currentPoints = [];
+let previewPoly = null;
+
+function getMousePos(evt) {
+  const rect = overlay.getBoundingClientRect();
+
+  const x = (evt.clientX - rect.left) * (mapImage.naturalWidth / rect.width);
+  const y = (evt.clientY - rect.top) * (mapImage.naturalHeight / rect.height);
+
+  return [Math.round(x), Math.round(y)];
 }
 
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n));
-}
-
-function resetView() {
-  scale = 1;
-  tx = 0;
-  ty = 0;
-  applyTransform();
-}
-
-function rgbToRgba(rgbString, alpha) {
-  const match = rgbString.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/i);
-  if (!match) return `rgba(100,160,255,${alpha})`;
-  const [, r, g, b] = match;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-async function loadTerritories() {
-  const res = await fetch("./data/territories.json");
-  territories = await res.json();
-  drawRegions();
-}
-
-function drawRegions() {
-  overlay.innerHTML = "";
-
-  for (const t of territories) {
-    const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    poly.setAttribute("points", t.points.map(([x, y]) => `${x},${y}`).join(" "));
-    poly.setAttribute("class", "region");
-    poly.dataset.id = t.id;
-
-    const baseColor = t.color || "rgb(100,160,255)";
-    poly.style.fill = rgbToRgba(baseColor, 0.22);
-    poly.style.stroke = baseColor;
-    poly.style.strokeWidth = "2";
-
-    poly.addEventListener("click", (e) => {
-      e.stopPropagation();
-      selectTerritory(t.id);
-    });
-
-    overlay.appendChild(poly);
+function drawPreview() {
+  if (!previewPoly) {
+    previewPoly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    previewPoly.style.fill = "rgba(255,255,255,0.1)";
+    previewPoly.style.stroke = "white";
+    previewPoly.style.strokeWidth = "2";
+    overlay.appendChild(previewPoly);
   }
+
+  previewPoly.setAttribute(
+    "points",
+    currentPoints.map(p => p.join(",")).join(" ")
+  );
 }
 
-function selectTerritory(id) {
-  selectedId = id;
-  const t = territories.find(x => x.id === id);
-  if (!t) return;
+function finishPolygon() {
 
-  overlay.querySelectorAll(".region").forEach(el => {
-    const territory = territories.find(x => x.id === el.dataset.id);
-    const baseColor = territory?.color || "rgb(100,160,255)";
-    const isSelected = el.dataset.id === id;
+  if (currentPoints.length < 3) {
+    alert("Need at least 3 points");
+    return;
+  }
 
-    el.classList.toggle("selected", isSelected);
-    el.style.fill = isSelected ? rgbToRgba(baseColor, 0.42) : rgbToRgba(baseColor, 0.22);
-    el.style.stroke = baseColor;
-    el.style.strokeWidth = isSelected ? "3" : "2";
-  });
+  const name = prompt("Territory name:");
 
-  titleEl.textContent = t.name;
-  metaEl.textContent = [t.type, t.owner ? `Owner: ${t.owner}` : ""].filter(Boolean).join(" • ");
-  descEl.textContent = t.description || "";
+  const territory = {
+    id: name.toLowerCase().replace(/\s+/g, "-"),
+    name: name,
+    type: "Territory",
+    owner: "",
+    description: "",
+    color: "rgb(255,255,255)",
+    points: currentPoints
+  };
+
+  territories.push(territory);
+
+  drawTerritory(territory);
+
+  currentPoints = [];
+
+  if (previewPoly) {
+    previewPoly.remove();
+    previewPoly = null;
+  }
+
+  console.log("Saved territory", territory);
 }
 
-function clearSelection() {
-  selectedId = null;
-  overlay.querySelectorAll(".region").forEach(el => {
-    const territory = territories.find(x => x.id === el.dataset.id);
-    const baseColor = territory?.color || "rgb(100,160,255)";
-    el.classList.remove("selected");
-    el.style.fill = rgbToRgba(baseColor, 0.22);
-    el.style.stroke = baseColor;
-    el.style.strokeWidth = "2";
-  });
+function drawTerritory(t) {
 
-  titleEl.textContent = "Click a territory";
-  metaEl.textContent = "";
-  descEl.textContent = "Territory information will appear here.";
-}
+  const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
 
-mapImage.addEventListener("load", () => {
-  overlay.setAttribute("width", mapImage.naturalWidth);
-  overlay.setAttribute("height", mapImage.naturalHeight);
-  overlay.setAttribute("viewBox", `0 0 ${mapImage.naturalWidth} ${mapImage.naturalHeight}`);
-  loadTerritories();
-});
-
-if (mapImage.complete) {
-  mapImage.dispatchEvent(new Event("load"));
-}
-
-stage.addEventListener("mousedown", (e) => {
-  dragging = true;
-  stage.classList.add("grabbing");
-  lastX = e.clientX;
-  lastY = e.clientY;
-});
-
-window.addEventListener("mouseup", () => {
-  dragging = false;
-  stage.classList.remove("grabbing");
-});
-
-window.addEventListener("mousemove", (e) => {
-  if (!dragging) return;
-  const dx = e.clientX - lastX;
-  const dy = e.clientY - lastY;
-  tx += dx;
-  ty += dy;
-  lastX = e.clientX;
-  lastY = e.clientY;
-  applyTransform();
-});
-
-stage.addEventListener("wheel", (e) => {
-  e.preventDefault();
-
-  const rect = stage.getBoundingClientRect();
-  const cx = e.clientX - rect.left;
-  const cy = e.clientY - rect.top;
-
-  const oldScale = scale;
-  scale = clamp(scale * (1 - e.deltaY * 0.0015), 0.25, 6);
-
-  const wx = (cx - tx) / oldScale;
-  const wy = (cy - ty) / oldScale;
-
-  tx = cx - wx * scale;
-  ty = cy - wy * scale;
-  applyTransform();
-}, { passive: false });
-
-stage.addEventListener("click", () => {
-  clearSelection();
-});
-
-resetBtn.addEventListener("click", () => {
-  resetView();
-  clearSelection();
-});
-
-searchEl.addEventListener("input", () => {
-  const q = searchEl.value.trim().toLowerCase();
-  resultsEl.innerHTML = "";
-
-  if (!q) return;
-
-  const matches = territories.filter(t =>
-    (t.name || "").toLowerCase().includes(q) ||
-    (t.owner || "").toLowerCase().includes(q) ||
-    (t.type || "").toLowerCase().includes(q) ||
-    (t.id || "").toLowerCase().includes(q)
+  poly.setAttribute(
+    "points",
+    t.points.map(p => p.join(",")).join(" ")
   );
 
-  for (const t of matches) {
-    const div = document.createElement("div");
-    div.className = "result-item";
-    div.textContent = t.name;
+  poly.style.fill = "rgba(100,160,255,0.25)";
+  poly.style.stroke = "white";
+  poly.style.strokeWidth = "2";
 
-    div.onclick = () => {
-      selectTerritory(t.id);
+  poly.addEventListener("click", e => {
+    e.stopPropagation();
 
-      if (Array.isArray(t.centroid) && t.centroid.length === 2) {
-        const [x, y] = t.centroid;
-        const rect = stage.getBoundingClientRect();
-        tx = rect.width / 2 - x * scale;
-        ty = rect.height / 2 - y * scale;
-        applyTransform();
-      }
-    };
+    titleEl.textContent = t.name;
+    metaEl.textContent = t.type;
+    descEl.textContent = t.description || "";
+  });
 
-    resultsEl.appendChild(div);
-  }
+  overlay.appendChild(poly);
+}
+
+function exportJSON() {
+
+  const json = JSON.stringify(territories, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "territories.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+overlay.addEventListener("click", e => {
+
+  if (!drawMode) return;
+
+  const point = getMousePos(e);
+
+  currentPoints.push(point);
+
+  drawPreview();
 });
+
+window.addEventListener("keydown", e => {
+
+  if (e.key === "Enter") finishPolygon();
+
+  if (e.key === "Backspace") {
+    currentPoints.pop();
+    drawPreview();
+  }
+
+  if (e.key === "e") exportJSON();
+});
+
+mapImage.onload = () => {
+
+  overlay.setAttribute("width", mapImage.naturalWidth);
+  overlay.setAttribute("height", mapImage.naturalHeight);
+
+  overlay.setAttribute(
+    "viewBox",
+    `0 0 ${mapImage.naturalWidth} ${mapImage.naturalHeight}`
+  );
+};
