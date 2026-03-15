@@ -3,30 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Minecraft Map</title>
+  <title>Minecraft Server Map</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <div id="app">
-    <div id="map-wrap">
-      <div id="toolbar">
+    <section id="map-wrap">
+      <div id="toolbar" class="glass-card">
         <input id="search" type="search" placeholder="Search territory..." />
-        <button id="resetView">Reset</button>
+        <button id="resetView" type="button">Reset View</button>
       </div>
 
       <div id="stage">
         <div id="world">
-          <img id="mapImage" src="./output-smallpngtools.png" alt="Minecraft server map" />
+          <img id="mapImage" src="./output-smallpngtools.png" alt="Minecraft-Map-Site" />
           <svg id="overlay"></svg>
         </div>
       </div>
-    </div>
+    </section>
 
     <aside id="panel">
-      <h1 id="title">Click a territory</h1>
-      <div id="meta"></div>
-      <p id="description">Territory information will appear here.</p>
-      <div id="results"></div>
+      <div class="panel-top">
+        <div class="eyebrow">Interactive Map</div>
+        <h1 id="title">Click a territory</h1>
+        <div id="meta">Territory info</div>
+      </div>
+
+      <section class="info-block hero-block">
+        <div class="info-label">Description</div>
+        <p id="description">Territory information will appear here.</p>
+      </section>
+
+      <section class="info-block quick-actions">
+        <div class="info-label">Map Controls</div>
+        <div class="control-list">
+          <div class="control-item">
+            <span class="control-key">Drag</span>
+            <span class="control-text">Move around the map</span>
+          </div>
+          <div class="control-item">
+            <span class="control-key">Wheel</span>
+            <span class="control-text">Zoom in and out</span>
+          </div>
+          <div class="control-item">
+            <span class="control-key">Click</span>
+            <span class="control-text">Open territory info</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="info-block search-block">
+        <div class="info-label">Search Results</div>
+        <div id="results"></div>
+      </section>
     </aside>
   </div>
 
